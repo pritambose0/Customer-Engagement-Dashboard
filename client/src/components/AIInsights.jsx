@@ -25,25 +25,11 @@ export const AIInsights = ({ insights }) => {
               transition={{ duration: 0.3, delay: index * 0.1 }}
             >
               {/* Icon */}
-              <motion.div
-                className="w-12 h-12 flex items-center justify-center rounded-full text-white text-2xl flex-shrink-0 mx-auto"
-                animate={{ rotate: [0, 10, -10, 0] }}
-                transition={{ duration: 0.6, repeat: Infinity, repeatDelay: 3 }}
-                style={{
-                  background:
-                    insight.type === "Engagement"
-                      ? "linear-gradient(to right, #4CAF50, #8BC34A)"
-                      : insight.type === "Retention"
-                      ? "linear-gradient(to right, #FF9800, #FF5722)"
-                      : "linear-gradient(to right, #3F51B5, #673AB7)",
-                }}
-              >
-                {insight.type === "Engagement"
-                  ? "🚀"
-                  : insight.type === "Retention"
-                  ? "🔄"
-                  : "💡"}
-              </motion.div>
+              <img
+                src={`https://thispersondoesnotexist.com`}
+                alt={insight.name}
+                className="w-12 h-12 rounded-full object-cover"
+              />
 
               {/* Content */}
               <div className="flex-1 text-center sm:text-left w-full">

@@ -16,10 +16,6 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
-    lastLogin: {
-      type: Date,
-      default: Date.now,
-    },
     retentionCategory: {
       type: String,
       enum: ["High", "Medium", "Low"],

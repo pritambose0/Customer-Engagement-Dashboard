@@ -3,14 +3,24 @@ import { Engagement } from "../models/engagement.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
+// Calculate engagement score
 const calculateEngagementScore = (engagement) => {
-  return (
+  let engagementScore =
     engagement.logins * 2 +
     engagement.featureUsage * 5 +
     engagement.timeSpent * 1 +
     engagement.profileUpdates * 3 +
-    engagement.comments * 4
+    engagement.comments * 4;
+  // console.log("ENGAGEMENT", engagement);
+
+  const now = new Date();
+  const diffInDays = Math.floor(
+    (now - engagement.lastLogin) / (1000 * 60 * 60 * 24)
   );
+
+  engagementScore = engagementScore - diffInDays;
+
+  return engagementScore;
 };
 
 // Mock AI insights
@@ -43,17 +53,6 @@ const getRecommendation = (
   if (comments > 4) return "Encourage user-generated content contributions.";
 
   return "Recognize loyal users with shoutouts, exclusive perks, or gamified badges.";
-};
-
-// Reduce engagement score based on last login
-const getAdjustedScore = (baseScore, lastLogin) => {
-  const now = new Date();
-  const diffInDays = Math.floor((now - lastLogin) / (1000 * 60 * 60 * 24));
-
-  if (diffInDays > 90) return baseScore * 0.3; // Reduce 70% if last login > 3 months
-  if (diffInDays > 60) return baseScore * 0.5; // Reduce 50% if last login > 2 months
-  if (diffInDays > 30) return baseScore * 0.7; // Reduce 30% if last login > 1 month
-  return baseScore; // No penalty if logged in within 30 days
 };
 
 const getAllUsers = asyncHandler(async (req, res) => {
@@ -95,13 +94,28 @@ const getAllUsers = asyncHandler(async (req, res) => {
         ? calculateEngagementScore(engagement)
         : 0;
 
+      let retentionCategory;
+      if (engagementScore <= 81) {
+        retentionCategory = "Low";
+      } else if (engagementScore <= 163) {
+        retentionCategory = "Medium";
+      } else {
+        retentionCategory = "High";
+      }
+
+      // Update retention category if it has changed
+      if (user.retentionCategory !== retentionCategory) {
+        user.retentionCategory = retentionCategory;
+        await user.save();
+      }
+
       return {
         userId: user._id,
         name: user.name,
         email: user.email,
-        lastLogin: user.lastLogin,
+        lastLogin: engagement?.lastLogin || new Date(),
         engagementScore,
-        retentionCategory: user.retentionCategory,
+        retentionCategory,
       };
     })
   );
@@ -157,7 +171,6 @@ const getActiveUsers = asyncHandler(async (_, res) => {
 const getEngagementScore = asyncHandler(async (req, res) => {
   const { userId } = req.params;
   const engagement = await Engagement.findOne({ userId });
-
   const engagementScore = engagement ? calculateEngagementScore(engagement) : 0;
 
   return res
@@ -219,9 +232,6 @@ const getChurnPrediction = asyncHandler(async (_, res) => {
 
     let engagementScore = engagement ? calculateEngagementScore(engagement) : 0;
 
-    // Get recommendation based on engagement score
-    engagementScore = getAdjustedScore(engagementScore, user.lastLogin);
-
     let riskLevel = "Low";
     if (engagementScore < 81) riskLevel = "High";
     else if (engagementScore < 163) riskLevel = "Medium";
@@ -230,7 +240,7 @@ const getChurnPrediction = asyncHandler(async (_, res) => {
       userId: user._id,
       name: user.name,
       email: user.email,
-      lastLogin: user.lastLogin,
+      lastLogin: engagement?.lastLogin || new Date(),
       engagementScore,
       riskLevel,
     });

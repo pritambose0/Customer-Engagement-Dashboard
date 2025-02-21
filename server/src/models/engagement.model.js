@@ -7,6 +7,7 @@ const engagementSchema = new mongoose.Schema(
     featureUsage: { type: Number, default: 0 },
     timeSpent: { type: Number, default: 0 },
     profileUpdates: { type: Number, default: 0 },
+    lastLogin: { type: Date, default: Date.now },
     comments: { type: Number, default: 0 },
   },
   { timestamps: true }

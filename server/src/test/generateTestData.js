@@ -47,7 +47,7 @@ const generateRandomUsers = async (numUsers) => {
     const retentionCategory = getRetentionCategory(engagementScore);
 
     // Create user
-    let user = new User({ name, email, lastLogin, retentionCategory });
+    let user = new User({ name, email, retentionCategory });
     await user.save();
 
     // Save engagement data
@@ -58,6 +58,7 @@ const generateRandomUsers = async (numUsers) => {
       timeSpent,
       profileUpdates,
       comments,
+      lastLogin,
     });
 
     await engagementData.save();
