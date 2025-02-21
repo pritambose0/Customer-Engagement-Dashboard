@@ -28,7 +28,7 @@ export const AIInsights = ({ insights }) => {
               <img
                 src={`https://thispersondoesnotexist.com`}
                 alt={insight.name}
-                className="w-12 h-12 rounded-full object-cover"
+                className="w-12 h-12 rounded-full object-cover mx-auto"
               />
 
               {/* Content */}
