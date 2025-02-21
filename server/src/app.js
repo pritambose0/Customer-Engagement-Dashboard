@@ -14,9 +14,11 @@ app.use(express.json({ limit: "16kb" }));
 
 // Import Routes
 import userRoutes from "./routes/user.routes.js";
+import healthCheckRouter from "./routes/healthcheck.routes.js";
 
 // Routes Declarations
 app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/healthcheck", healthCheckRouter);
 
 app.use(errorHandler);
 
