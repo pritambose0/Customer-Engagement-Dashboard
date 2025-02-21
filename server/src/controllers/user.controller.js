@@ -3,6 +3,20 @@ import { Engagement } from "../models/engagement.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
+// Reduce engagement score based on last login
+const getAdjustedScore = (baseScore, lastLogin) => {
+  const now = new Date();
+  const diffInDays = Math.floor((now - lastLogin) / (1000 * 60 * 60 * 24));
+
+  if (diffInDays > 90) return baseScore * 0.3; // Reduce 70% if last login > 3 months
+  if (diffInDays > 60) return baseScore * 0.5; // Reduce 50% if last login > 2 months
+  if (diffInDays > 30) return baseScore * 0.7; // Reduce 30% if last login > 1 month
+
+  if (baseScore < 0) return 0;
+
+  return baseScore; // No penalty if logged in within 30 days
+};
+
 // Calculate engagement score
 const calculateEngagementScore = (engagement) => {
   let engagementScore =
@@ -13,14 +27,9 @@ const calculateEngagementScore = (engagement) => {
     engagement.comments * 4;
   // console.log("ENGAGEMENT", engagement);
 
-  const now = new Date();
-  const diffInDays = Math.floor(
-    (now - engagement.lastLogin) / (1000 * 60 * 60 * 24)
-  );
+  let adjustedScore = getAdjustedScore(engagementScore, engagement.lastLogin);
 
-  engagementScore = engagementScore - diffInDays;
-
-  return engagementScore;
+  return Math.floor(adjustedScore);
 };
 
 // Mock AI insights
