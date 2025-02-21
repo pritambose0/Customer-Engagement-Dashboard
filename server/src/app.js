@@ -20,6 +20,6 @@ import healthCheckRouter from "./routes/healthcheck.routes.js";
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/healthcheck", healthCheckRouter);
 
-app.use(errorHandler);
+// app.use(errorHandler);
 
 export { app };

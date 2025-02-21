@@ -45,6 +45,17 @@ const getRecommendation = (
   return "Recognize loyal users with shoutouts, exclusive perks, or gamified badges.";
 };
 
+// Reduce engagement score based on last login
+const getAdjustedScore = (baseScore, lastLogin) => {
+  const now = new Date();
+  const diffInDays = Math.floor((now - lastLogin) / (1000 * 60 * 60 * 24));
+
+  if (diffInDays > 90) return baseScore * 0.3; // Reduce 70% if last login > 3 months
+  if (diffInDays > 60) return baseScore * 0.5; // Reduce 50% if last login > 2 months
+  if (diffInDays > 30) return baseScore * 0.7; // Reduce 30% if last login > 1 month
+  return baseScore; // No penalty if logged in within 30 days
+};
+
 const getAllUsers = asyncHandler(async (req, res) => {
   const { startDate, endDate, retentionCategory, search, minScore, maxScore } =
     req.query;
@@ -206,9 +217,10 @@ const getChurnPrediction = asyncHandler(async (_, res) => {
   for (const user of users) {
     const engagement = await Engagement.findOne({ userId: user._id });
 
-    const engagementScore = engagement
-      ? calculateEngagementScore(engagement)
-      : 0;
+    let engagementScore = engagement ? calculateEngagementScore(engagement) : 0;
+
+    // Get recommendation based on engagement score
+    engagementScore = getAdjustedScore(engagementScore, user.lastLogin);
 
     let riskLevel = "Low";
     if (engagementScore < 81) riskLevel = "High";

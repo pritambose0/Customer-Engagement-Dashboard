@@ -46,7 +46,7 @@ export const AIInsights = ({ insights }) => {
               </motion.div>
 
               {/* Content */}
-              <div className="flex-1 text-center sm:text-left">
+              <div className="flex-1 text-center sm:text-left w-full">
                 <div className="flex flex-col sm:flex-row justify-between items-center sm:items-start">
                   <div className="flex gap-2 items-center flex-wrap">
                     <p className="text-lg font-semibold text-gray-400">Name:</p>
@@ -72,7 +72,7 @@ export const AIInsights = ({ insights }) => {
                         : "bg-red-500 text-white"
                     }`}
                   >
-                    {insight.retentionCategory}
+                    {insight.retentionCategory} Retention
                   </p>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2 items-center mt-2 text-center sm:text-left">

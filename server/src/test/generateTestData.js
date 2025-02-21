@@ -24,7 +24,9 @@ const generateRandomUsers = async (numUsers) => {
   for (let i = 0; i < numUsers; i++) {
     const name = faker.person.fullName();
     const email = faker.internet.email();
-    const lastLogin = faker.date.past();
+    const lastLogin = faker.date.recent({
+      days: faker.helpers.arrayElement([3, 7, 15, 30, 60, 90, 120]),
+    });
 
     // Generate random engagement data
     const logins = faker.number.int({ min: 0, max: 10 });
