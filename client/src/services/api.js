@@ -38,9 +38,9 @@ export const fetchActiveUsers = async () => {
 export const fetchRetentionRate = async (startDate, endDate) => {
   try {
     const response = await axios.get(
-      `${
-        import.meta.env.VITE_API_URI
-      }/users/retention-rate?startDate=${startDate}&endDate=${endDate}`
+      `${import.meta.env.VITE_API_URI}/users/retention-rate?startDate=${
+        startDate ? startDate : ""
+      }&endDate=${endDate ? endDate : ""}`
     );
 
     return response.data.data;

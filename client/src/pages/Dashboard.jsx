@@ -104,7 +104,7 @@ export const Dashboard = () => {
             🔄 Retention Rate
           </h2>
 
-          {/* Date Range Input - Improved Layout */}
+          {/* Date Range Input */}
           <div className="flex flex-col items-center gap-2 sm:gap-3 mt-3 sm:mt-4 w-full">
             <div className="flex gap-2 flex-col sm:flex-row sm:gap-3">
               <p className="text-sm text-gray-400 my-auto">Date Range:</p>
@@ -125,7 +125,7 @@ export const Dashboard = () => {
             <div className="flex gap-2 sm:gap-3">
               <button
                 onClick={handleFetchRetention}
-                className="bg-indigo-500 px-3 py-2 rounded-lg text-white text-sm font-medium hover:bg-indigo-600 transition-all shadow-md hover:shadow-lg cursor-pointer"
+                className="bg-indigo-500 px-3 py-2 rounded-md text-white text-sm font-medium hover:bg-indigo-600 transition-all shadow-md hover:shadow-lg cursor-pointer"
               >
                 Fetch
               </button>
@@ -135,7 +135,7 @@ export const Dashboard = () => {
                   setEndDate("");
                   handleFetchRetention();
                 }}
-                className="bg-gray-600 px-3 py-2 rounded-lg text-white text-sm font-medium hover:bg-gray-700 transition-all shadow-md hover:shadow-lg cursor-pointer"
+                className="bg-gray-600 px-3 py-2 rounded-md text-white text-sm font-medium hover:bg-gray-700 transition-all shadow-md hover:shadow-lg cursor-pointer"
               >
                 Reset
               </button>
