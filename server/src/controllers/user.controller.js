@@ -217,13 +217,27 @@ const getOverallEngagementScore = asyncHandler(async (_, res) => {
     );
 });
 
-const getRetentionRate = asyncHandler(async (_, res) => {
+const getRetentionRate = asyncHandler(async (req, res) => {
+  const { startDate, endDate } = req.query;
+
+  const filter = {};
+
+  if (startDate && endDate) {
+    filter.lastActive = {
+      $gte: new Date(startDate),
+      $lte: new Date(endDate),
+    };
+  }
+
   const totalUsers = await User.countDocuments();
   const returningUsers = await User.countDocuments({
+    ...filter,
     retentionCategory: "High",
   });
 
-  const retentionRate = ((returningUsers / totalUsers) * 100).toFixed(2);
+  const retentionRate = totalUsers
+    ? ((returningUsers / totalUsers) * 100).toFixed(2)
+    : 0;
 
   return res
     .status(200)

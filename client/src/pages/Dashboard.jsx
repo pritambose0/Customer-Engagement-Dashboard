@@ -21,6 +21,13 @@ export const Dashboard = () => {
   const [insights, setInsights] = useState([]);
   const [retentionRate, setRetentionRate] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
+  const handleFetchRetention = async () => {
+    const data = await fetchRetentionRate(startDate, endDate);
+    setRetentionRate(data);
+  };
 
   useEffect(() => {
     Promise.all([
@@ -48,28 +55,28 @@ export const Dashboard = () => {
       </motion.h1>
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mx-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mx-4 sm:mx-6">
         {/* Active Users */}
-        <motion.div className="bg-gray-800 p-6 rounded-lg shadow-lg flex flex-col hover:shadow-xl transition-all">
-          <h2 className="text-lg font-semibold text-gray-400 flex items-center gap-2">
+        <motion.div className="bg-gray-800 bg-opacity-75 p-6 rounded-xl shadow-lg flex flex-col hover:shadow-2xl transition-all w-full">
+          <h2 className="text-md sm:text-lg font-semibold text-gray-300 flex gap-2">
             📅 Active Users
           </h2>
-          <div className="mt-3 flex space-x-6 my-auto">
-            <p className="text-md text-gray-300">
+          <div className="my-auto flex gap-2 sm:gap-3">
+            <p className="text-sm sm:text-lg text-gray-400">
               Today:{" "}
-              <span className="font-semibold text-indigo-300">
+              <span className="text-sm sm:text-xl font-bold text-indigo-400">
                 {activeUsers?.dailyActiveUsers || 0}
               </span>
             </p>
-            <p className="text-md text-gray-300">
+            <p className="text-sm sm:text-lg text-gray-400">
               Weekly:{" "}
-              <span className="font-semibold text-indigo-300">
+              <span className="text-sm sm:text-xl font-bold text-blue-400">
                 {activeUsers?.weeklyActiveUsers || 0}
               </span>
             </p>
-            <p className="text-md text-gray-300">
+            <p className="text-sm sm:text-lg text-gray-400">
               Monthly:{" "}
-              <span className="font-semibold text-indigo-300">
+              <span className="text-sm sm:text-xl font-bold text-green-400">
                 {activeUsers?.monthlyActiveUsers || 0}
               </span>
             </p>
@@ -77,25 +84,68 @@ export const Dashboard = () => {
         </motion.div>
 
         {/* Engagement Score */}
-        <motion.div className="bg-gray-800 p-6 rounded-lg shadow-lg flex flex-col items-center hover:shadow-xl transition-all">
-          <h2 className="text-lg font-semibold text-gray-400 flex items-center gap-2">
+        <motion.div className="bg-gray-800 bg-opacity-75 p-6 rounded-xl shadow-lg flex flex-col items-center hover:shadow-2xl transition-all w-full">
+          <h2 className="text-md sm:text-lg font-semibold text-gray-300 flex items-center gap-2">
             🔥 Engagement Score
           </h2>
-          <p className="text-4xl font-bold text-green-400 mt-2">
-            {engagementScore || 0}%
-          </p>
-          <p className="text-sm text-gray-500 mt-1">Overall user interaction</p>
+          <div className="my-auto">
+            <p className="text-3xl sm:text-5xl font-extrabold text-green-400 mt-2 sm:mt-4 drop-shadow-lg">
+              {engagementScore || 0}%
+            </p>
+            <p className="text-xs sm:text-sm text-gray-400 mt-1 tracking-wide">
+              Overall user interaction
+            </p>
+          </div>
         </motion.div>
 
         {/* Retention Rate */}
-        <motion.div className="bg-gray-800 p-6 rounded-lg shadow-lg flex flex-col items-center hover:shadow-xl transition-all">
-          <h2 className="text-lg font-semibold text-gray-400 flex items-center gap-2">
+        <motion.div className="bg-gray-800 bg-opacity-75 p-6 rounded-xl shadow-lg flex flex-col items-center hover:shadow-2xl transition-all w-full">
+          <h2 className="text-md sm:text-lg font-semibold text-gray-300 flex items-center gap-2">
             🔄 Retention Rate
           </h2>
-          <p className="text-4xl font-bold text-yellow-400 mt-2">
+
+          {/* Date Range Input - Improved Layout */}
+          <div className="flex flex-col items-center gap-2 sm:gap-3 mt-3 sm:mt-4 w-full">
+            <div className="flex gap-2 sm:gap-3">
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="bg-gray-800 text-white text-xs sm:text-sm p-2 rounded-lg w-28 sm:w-36 border border-gray-600 focus:ring-2 focus:ring-indigo-500 transition-all"
+              />
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="bg-gray-800 text-white text-xs sm:text-sm p-2 rounded-lg w-28 sm:w-36 border border-gray-600 focus:ring-2 focus:ring-indigo-500 transition-all"
+              />
+            </div>
+
+            <div className="flex gap-2 sm:gap-3">
+              <button
+                onClick={handleFetchRetention}
+                className="bg-indigo-500 px-2 sm:px-3 py-1 sm:py-2 rounded-lg text-white text-xs sm:text-sm font-medium hover:bg-indigo-600 transition-all shadow-md hover:shadow-lg cursor-pointer"
+              >
+                Fetch
+              </button>
+              <button
+                onClick={() => {
+                  setStartDate("");
+                  setEndDate("");
+                  handleFetchRetention();
+                }}
+                className="bg-gray-600 px-2 sm:px-3 py-1 sm:py-2 rounded-lg text-white text-xs sm:text-sm font-medium hover:bg-gray-700 transition-all shadow-md hover:shadow-lg cursor-pointer"
+              >
+                Reset
+              </button>
+            </div>
+          </div>
+
+          {/* Retention Rate Display - More Impactful */}
+          <p className="text-3xl sm:text-4xl font-extrabold text-yellow-400 mt-3 sm:mt-4 drop-shadow-lg">
             {retentionRate || 0}%
           </p>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-xs sm:text-sm text-gray-400 mt-1 tracking-wide">
             Returning users over time
           </p>
         </motion.div>
